@@ -1,5 +1,11 @@
+/*
+  Helpful Links
+
+  FlexBox: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox
+  CSS Flow of Elements: https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Normal_Flow
+ */
 .square {
-  background: #fff;
+  background: #999999;
   border: 1px solid #999;
   /*float: left;*/
   font-size: 24px;
@@ -8,57 +14,19 @@
   margin: 5%;
   padding: 5%;
   text-align: center;
+  justify-content: space-evenly;
+  width: fit-content;
 }
 
-/*
-  FlexBox: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox
- */
+
 .row {
   display: flex;
   justify-content: space-evenly;
-  width: 90%;
-  position: relative;
-  top: 5%;
-  bottom: 5%;
-  left: 5%;
-  right: 5%;
+  width: -moz-fit-content;
+  width: fit-content;
+  /*position: relative;*/
+  /*top: 5%;*/
+  /*bottom: 5%;*/
+  /*left: 5%;*/
+  /*right: 5%;*/
 }
-
-/*.App {*/
-/*  text-align: center;*/
-/*}*/
-
-/*.App-logo {*/
-/*  height: 40vmin;*/
-/*  pointer-events: none;*/
-/*}*/
-
-/*@media (prefers-reduced-motion: no-preference) {*/
-/*  .App-logo {*/
-/*    animation: App-logo-spin infinite 20s linear;*/
-/*  }*/
-/*}*/
-
-/*.App-header {*/
-/*  background-color: #282c34;*/
-/*  min-height: 100vh;*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  font-size: calc(10px + 2vmin);*/
-/*  color: white;*/
-/*}*/
-
-/*.App-link {*/
-/*  color: #61dafb;*/
-/*}*/
-
-/*@keyframes App-logo-spin {*/
-/*  from {*/
-/*    transform: rotate(0deg);*/
-/*  }*/
-/*  to {*/
-/*    transform: rotate(360deg);*/
-/*  }*/
-/*}*/
