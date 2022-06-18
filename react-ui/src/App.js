@@ -54,8 +54,9 @@ class App extends React.Component {
 
     generateSquare(square) {
         return (
-            <div key={square.elementKey} className="square">
-                <button>{square.val}</button>
+            <div key={square.elementKey}>
+                {/*<button>{square.val}</button>*/}
+                <button>{square.elementKey}</button>
             </div>
         )
     }
@@ -63,16 +64,16 @@ class App extends React.Component {
     render() {
         let allRows = this.state.allRows.map((r) => {
             return (
-               <div key={r.elementKey}>
-                   <div className={"row"}>
+               <div key={r.elementKey} className="row">
                     {this.generateRow(r)}
-                   </div>
                </div>
            );
         });
 
         return (
-            <div>{allRows}</div>
+            <div className="main">
+                {allRows}
+            </div>
         );
     }
 }
