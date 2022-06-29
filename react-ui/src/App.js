@@ -87,9 +87,15 @@ class App extends React.Component {
         });
 
         return (
+            <div>
             <div className="main">
                 {generateAllRows}
             </div>
+                <div className={"submitButton"}>
+                    <button type={"button"}>Submit</button>
+                </div>
+            </div>
+
         );
     }
 }
