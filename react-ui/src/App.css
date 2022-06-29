@@ -23,9 +23,14 @@
   flex-direction: row;
 }
 
-button {
+input {
   background-color: antiquewhite;
   width: 3rem;
   height: 3rem;
   margin: 1rem;
+  text-align: center;
+  text-overflow: clip;
+  font-stretch: expanded;
+  text-transform: uppercase;
+  font-size: 2rem;
 }

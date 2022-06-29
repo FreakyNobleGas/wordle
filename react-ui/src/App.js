@@ -8,8 +8,12 @@ const numOfRows = 5;
 class square {
     constructor(elementKey) {
         this.elementKey = elementKey;
-        this.val = "x"
+        this.val = ""
         this.color = ""
+    }
+
+    setSquareVal(c) {
+        this.val = c
     }
 }
 
@@ -27,6 +31,7 @@ class App extends React.Component {
         this.state = {
             allRows: this.createRows()
         }
+        this.updateSquare = this.updateSquare.bind(this);
     }
 
     createRows() {
@@ -52,17 +57,28 @@ class App extends React.Component {
         });
     }
 
+    updateSquare(square, event) {
+        square.setSquareVal(event.nativeEvent.data)
+        this.setState({allRows: this.state.allRows})
+    }
+
     generateSquare(square) {
         return (
             <div key={square.elementKey}>
-                {/*<button>{square.val}</button>*/}
-                <button>{square.elementKey}</button>
+                <input
+                    type={"text"}
+                    id={square.elementKey}
+                    name={square.elementKey}
+                    value={square.val}
+                    onChange={(e) => this.updateSquare(square, e)}
+                >
+                </input>
             </div>
         )
     }
 
     render() {
-        let allRows = this.state.allRows.map((r) => {
+        let generateAllRows = this.state.allRows.map((r) => {
             return (
                <div key={r.elementKey} className="row">
                     {this.generateRow(r)}
@@ -72,7 +88,7 @@ class App extends React.Component {
 
         return (
             <div className="main">
-                {allRows}
+                {generateAllRows}
             </div>
         );
     }
