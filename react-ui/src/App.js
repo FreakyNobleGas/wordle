@@ -10,6 +10,7 @@ class square {
         this.elementKey = elementKey;
         this.val = ""
         this.correctColor = "green"
+        this.incorrectColor = "grey"
         this.neutralColor = "#ADEFD1FF"
         // Hint color is when the letter in the square is correct, but in the wrong position.
         // For example, if the correct word is 'hello' and the guessed word was 'porch', then the
@@ -17,6 +18,10 @@ class square {
         this.hintColor = "yellow"
         this.color = { backgroundColor: this.neutralColor }
 
+    }
+
+    getSquareColor() {
+        return this.color.backgroundColor
     }
 
     setSquareVal(c) {
@@ -37,6 +42,12 @@ class square {
             return true
         }
         return false
+    }
+
+    setSquareColorToIncorrect() {
+        if (this.getSquareColor() === this.neutralColor) {
+            this.color = { backgroundColor: this.incorrectColor }
+        }
     }
 }
 
@@ -82,6 +93,10 @@ class row {
                     }
                 }
             }
+
+            for (let sq of this.squares) {
+                sq.setSquareColorToIncorrect()
+            }
         }
     }
 }
@@ -92,7 +107,7 @@ class App extends React.Component {
         super(props)
         this.state = {
             allRows: this.createRows(),
-            currRow: 0,
+            currRowNum: 0,
             // TODO Get Random MysteryWord
             mysteryWord: "HELLO"
         }
@@ -102,7 +117,7 @@ class App extends React.Component {
     }
 
     getCurrRow() {
-        return this.state.allRows[this.state.currRow]
+        return this.state.allRows[this.state.currRowNum]
     }
 
     createRows() {
@@ -115,7 +130,7 @@ class App extends React.Component {
 
     createSquares(rowNum) {
         let r = new row(rowNum);
-        for(let i = 0; i < rowLen; i++) {
+        for (let i = 0; i < rowLen; i++) {
             let elementKey = rowNum + ":" + i.toString()
             r.squares.push(new square(elementKey));
         }
@@ -156,15 +171,20 @@ class App extends React.Component {
     checkRow() {
         console.log("Checking Row")
         let currRow = this.getCurrRow()
+        // TODO Let user know row was not valid
         let isRowValid = currRow.checkIfComplete()
         if (isRowValid) {
             currRow.updateRowColors(this.getMysteryWord())
-            this.setState({allRows: this.state.allRows})
             let isRowCorrect = currRow.checkIfCorrect(this.getMysteryWord())
             if (isRowCorrect) {
                 // TODO Make Winning Function
                 console.log("You win!")
+            } else {
+                this.setState((state, _) => ({
+                    currRowNum:(state.currRowNum + 1)
+                }))
             }
+            this.setState({allRows: this.state.allRows})
         }
     }
 
