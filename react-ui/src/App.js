@@ -9,11 +9,34 @@ class square {
     constructor(elementKey) {
         this.elementKey = elementKey;
         this.val = ""
-        this.color = ""
+        this.correctColor = "green"
+        this.neutralColor = "#ADEFD1FF"
+        // Hint color is when the letter in the square is correct, but in the wrong position.
+        // For example, if the correct word is 'hello' and the guessed word was 'porch', then the
+        // second square's color would be the hint color since 'hello' does have an 'o'.
+        this.hintColor = "yellow"
+        this.color = { backgroundColor: this.neutralColor }
+
     }
 
     setSquareVal(c) {
-        this.val = c
+        this.val = c.toUpperCase()
+    }
+
+    setSquareColorToCorrect(c) {
+        if (this.val === c) {
+            this.color = { backgroundColor: this.correctColor }
+            return true
+        }
+        return false
+    }
+
+    setSquareColorToHint(c) {
+        if (this.val === c) {
+            this.color = { backgroundColor: this.hintColor }
+            return true
+        }
+        return false
     }
 }
 
@@ -21,6 +44,45 @@ class row {
     constructor(elementKey) {
         this.elementKey = elementKey;
         this.squares = [];
+        this.submittedWord = ""
+    }
+
+    checkIfComplete() {
+        return this.squares.every((c) => c.val !== "")
+    }
+
+    checkIfCorrect(mysteryWord) {
+        let submittedWord = ""
+        for (let sq of this.squares) {
+            submittedWord += sq.val
+        }
+        this.submittedWord = submittedWord
+        return submittedWord.toUpperCase() === mysteryWord.toUpperCase() ? true : false
+    }
+
+    updateRowColors(mysteryWord) {
+        let lettersRemaining = mysteryWord
+        let squaresNotCorrect = []
+        for (let i = 0; i < mysteryWord.length; i++) {
+            let currChar = mysteryWord.at(i)
+            let removed = this.squares.at(i).setSquareColorToCorrect(currChar)
+            if (removed) {
+                lettersRemaining = lettersRemaining.replace(currChar, "")
+            } else {
+                squaresNotCorrect.push(i)
+            }
+        }
+        if (squaresNotCorrect.length !== 0) {
+            for (let currChar of lettersRemaining) {
+                for (let currSquareIndex of squaresNotCorrect) {
+                    let removed = this.squares.at(currSquareIndex).setSquareColorToHint(currChar)
+                    if (removed) {
+                        squaresNotCorrect = squaresNotCorrect.slice(currSquareIndex + 1, squaresNotCorrect.length)
+                        break
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -29,14 +91,23 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            allRows: this.createRows()
+            allRows: this.createRows(),
+            currRow: 0,
+            // TODO Get Random MysteryWord
+            mysteryWord: "HELLO"
         }
+
         this.updateSquare = this.updateSquare.bind(this);
+        this.checkRow = this.checkRow.bind(this);
+    }
+
+    getCurrRow() {
+        return this.state.allRows[this.state.currRow]
     }
 
     createRows() {
         let allRows = [];
-        for(let i = 0; i < numOfRows; i++) {
+        for (let i = 0; i < numOfRows; i++) {
             allRows.push(this.createSquares(i.toString()))
         }
         return allRows;
@@ -67,6 +138,7 @@ class App extends React.Component {
             <div key={square.elementKey}>
                 <input
                     type={"text"}
+                    style={square.color}
                     id={square.elementKey}
                     name={square.elementKey}
                     value={square.val}
@@ -75,6 +147,25 @@ class App extends React.Component {
                 </input>
             </div>
         )
+    }
+
+    getMysteryWord() {
+        return this.state.mysteryWord
+    }
+
+    checkRow() {
+        console.log("Checking Row")
+        let currRow = this.getCurrRow()
+        let isRowValid = currRow.checkIfComplete()
+        if (isRowValid) {
+            currRow.updateRowColors(this.getMysteryWord())
+            this.setState({allRows: this.state.allRows})
+            let isRowCorrect = currRow.checkIfCorrect(this.getMysteryWord())
+            if (isRowCorrect) {
+                // TODO Make Winning Function
+                console.log("You win!")
+            }
+        }
     }
 
     render() {
@@ -88,14 +179,13 @@ class App extends React.Component {
 
         return (
             <div>
-            <div className="main">
-                {generateAllRows}
-            </div>
-                <div className={"submitButton"}>
+                <div className="main">
+                    {generateAllRows}
+                </div>
+                <div className={"submitButton"} onClick={this.checkRow}>
                     <button type={"button"}>Submit</button>
                 </div>
             </div>
-
         );
     }
 }
