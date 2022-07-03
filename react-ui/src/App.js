@@ -9,6 +9,7 @@ class square {
     constructor(elementKey) {
         this.elementKey = elementKey;
         this.val = ""
+        this.autoFocus = false
         this.correctColor = "green"
         this.incorrectColor = "grey"
         this.neutralColor = "#ADEFD1FF"
@@ -22,6 +23,18 @@ class square {
 
     getSquareColor() {
         return this.color.backgroundColor
+    }
+
+    getElementKey() {
+        return this.elementKey
+    }
+
+    getSquareVal() {
+        return this.val
+    }
+
+    setAutoFocus(toggle) {
+        this.autoFocus = toggle
     }
 
     setSquareVal(c) {
@@ -120,6 +133,23 @@ class App extends React.Component {
         return this.state.allRows[this.state.currRowNum]
     }
 
+    getSquareByID(id) {
+        let r = parseInt(id[0])
+        let s = parseInt(id[2])
+        return this.state.allRows[r].squares[s]
+    }
+
+    getNextSquareByID(id) {
+        let r = parseInt(id[0])
+        let s = parseInt(id[2])
+        let nextS = s + 1
+        let currRow = this.state.allRows[r]
+        if (nextS < currRow.length) {
+            return currRow.squares[nextS]
+        }
+        return -1
+    }
+
     createRows() {
         let allRows = [];
         for (let i = 0; i < numOfRows; i++) {
@@ -143,8 +173,21 @@ class App extends React.Component {
         });
     }
 
+    componentDidMount() {
+        this[`sq-0:0`].focus()
+    }
+
+
     updateSquare(square, event) {
+        // TODO add logic to only accept certain characters
         square.setSquareVal(event.nativeEvent.data)
+        let id = event.target.id
+        let nextSquareNum = parseInt(id[2]) + 1
+        if (nextSquareNum < rowLen) {
+            let nextSquare = id[0] + ":" + nextSquareNum.toString()
+            this[`sq-${nextSquare}`].focus()
+        }
+
         this.setState({allRows: this.state.allRows})
     }
 
@@ -157,6 +200,7 @@ class App extends React.Component {
                     id={square.elementKey}
                     name={square.elementKey}
                     value={square.val}
+                    ref={ input => this[`sq-${square.elementKey}`] = input}
                     onChange={(e) => this.updateSquare(square, e)}
                 >
                 </input>
@@ -180,9 +224,12 @@ class App extends React.Component {
                 // TODO Make Winning Function
                 console.log("You win!")
             } else {
+                let nextRowNum = this.state.currRowNum + 1
                 this.setState((state, _) => ({
-                    currRowNum:(state.currRowNum + 1)
+                    currRowNum:(nextRowNum)
                 }))
+                // TODO Make sure that if row is not valid, then focus still works
+                this[`sq-${nextRowNum}:0`].focus()
             }
             this.setState({allRows: this.state.allRows})
         }
