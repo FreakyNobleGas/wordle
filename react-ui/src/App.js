@@ -3,13 +3,15 @@ import './App.css';
 
 // Global Variables
 const rowLen = 5;
-const numOfRows = 5;
+const numOfRows = 6;
+
+// Stretch Goals
+// Add way for users to track letters they've already used (e.g. Wordle uses keyboard on screen)
 
 class square {
     constructor(elementKey) {
         this.elementKey = elementKey;
         this.val = ""
-        this.autoFocus = false
         this.correctColor = "green"
         this.incorrectColor = "grey"
         this.neutralColor = "#ADEFD1FF"
@@ -96,14 +98,19 @@ class row {
                 squaresNotCorrect.push(i)
             }
         }
+
         if (squaresNotCorrect.length !== 0) {
             for (let currChar of lettersRemaining) {
-                for (let currSquareIndex of squaresNotCorrect) {
-                    let removed = this.squares.at(currSquareIndex).setSquareColorToHint(currChar)
+                let removed = false
+                let currSquareIndex = 0
+                for (currSquareIndex of squaresNotCorrect) {
+                    removed = this.squares.at(currSquareIndex).setSquareColorToHint(currChar)
                     if (removed) {
-                        squaresNotCorrect = squaresNotCorrect.slice(currSquareIndex + 1, squaresNotCorrect.length)
                         break
                     }
+                }
+                if (removed) {
+                    delete squaresNotCorrect[currSquareIndex]
                 }
             }
 
