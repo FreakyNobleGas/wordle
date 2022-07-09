@@ -134,6 +134,7 @@ class App extends React.Component {
 
         this.updateSquare = this.updateSquare.bind(this);
         this.checkRow = this.checkRow.bind(this);
+        this.captureExtraKeys = this.captureExtraKeys.bind(this)
     }
 
     getCurrRow() {
@@ -184,18 +185,47 @@ class App extends React.Component {
         this[`sq-0:0`].focus()
     }
 
-
-    updateSquare(square, event) {
-        // TODO add logic to only accept certain characters
-        square.setSquareVal(event.nativeEvent.data)
-        let id = event.target.id
-        let nextSquareNum = parseInt(id[2]) + 1
-        if (nextSquareNum < rowLen) {
+    focusNextSquare(nextSquareNum, id) {
+        if (nextSquareNum > -1 && nextSquareNum < rowLen) {
             let nextSquare = id[0] + ":" + nextSquareNum.toString()
             this[`sq-${nextSquare}`].focus()
         }
+    }
 
+    updateSquare(square, event) {
+        let pressedKey = event.nativeEvent.data
+        if (pressedKey === null) {
+            return
+        }
+        let charCode = pressedKey.toString().charCodeAt(0)
+        let id = event.target.id
+        let nextSquareNum = parseInt(id[2])
+        if (charCode > 64 && charCode < 123) {
+            square.setSquareVal(pressedKey)
+            nextSquareNum += 1
+        }
+        this.focusNextSquare(nextSquareNum, id)
         this.setState({allRows: this.state.allRows})
+    }
+
+    captureExtraKeys(square, e) {
+        console.log(e.key)
+        let key = e.key
+        // TODO Finish this function for backspace and enter
+        // Keys are "Backspace" & "Enter"
+        if (key.toUpperCase() === "BACKSPACE") {
+            if (square.getSquareVal() !== "") {
+                square.setSquareVal("")
+                this.setState({allRows: this.state.allRows})
+            } else {
+                let id = e.target.id
+                let nextSquareNum = parseInt(id[2]) - 1
+                this.focusNextSquare(nextSquareNum, id)
+            }
+        }
+        if (key.toUpperCase() === "ENTER") {
+            this.checkRow()
+        }
     }
 
     generateSquare(square) {
@@ -209,6 +239,7 @@ class App extends React.Component {
                     value={square.val}
                     ref={ input => this[`sq-${square.elementKey}`] = input}
                     onChange={(e) => this.updateSquare(square, e)}
+                    onKeyDownCapture={(e) => this.captureExtraKeys(square, e)}
                 >
                 </input>
             </div>
