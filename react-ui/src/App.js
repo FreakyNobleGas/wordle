@@ -1,5 +1,7 @@
 import React from 'react';
+import Alert from '@mui/material/Alert';
 import './App.css';
+import {Typography} from "@mui/material";
 
 // Global Variables
 const rowLen = 5;
@@ -129,7 +131,8 @@ class App extends React.Component {
             allRows: this.createRows(),
             currRowNum: 0,
             // TODO Get Random MysteryWord
-            mysteryWord: "HELLO"
+            mysteryWord: "HELLO",
+            invalidRowAlert: <div>hello</div>
         }
 
         this.updateSquare = this.updateSquare.bind(this);
@@ -185,6 +188,22 @@ class App extends React.Component {
         this[`sq-0:0`].focus()
     }
 
+    turnOffInvalidRowAlert() {
+        this.invalidRowAlert = <div></div>
+        this.setState({invalidRowAlert: this.invalidRowAlert})
+    }
+
+    turnOnInvalidRowAlert() {
+        this.invalidRowAlert = <Alert variant="filled" severity="info">
+            // TODO Implement Typography (might need to finalize install)
+            <Typography align={"center"}>
+                Missing letters
+            </Typography>
+
+        </Alert>
+        this.setState({invalidRowAlert: this.invalidRowAlert})
+    }
+
     focusNextSquare(nextSquareNum, id) {
         if (nextSquareNum > -1 && nextSquareNum < rowLen) {
             let nextSquare = id[0] + ":" + nextSquareNum.toString()
@@ -205,14 +224,12 @@ class App extends React.Component {
             nextSquareNum += 1
         }
         this.focusNextSquare(nextSquareNum, id)
+        this.turnOffInvalidRowAlert()
         this.setState({allRows: this.state.allRows})
     }
 
     captureExtraKeys(square, e) {
-        console.log(e.key)
         let key = e.key
-        // TODO Finish this function for backspace and enter
-        // Keys are "Backspace" & "Enter"
         if (key.toUpperCase() === "BACKSPACE") {
             if (square.getSquareVal() !== "") {
                 square.setSquareVal("")
@@ -251,7 +268,6 @@ class App extends React.Component {
     }
 
     checkRow() {
-        console.log("Checking Row")
         let currRow = this.getCurrRow()
         // TODO Let user know row was not valid
         let isRowValid = currRow.checkIfComplete()
@@ -270,6 +286,8 @@ class App extends React.Component {
                 this[`sq-${nextRowNum}:0`].focus()
             }
             this.setState({allRows: this.state.allRows})
+        } else {
+            this.turnOnInvalidRowAlert()
         }
     }
 
@@ -282,8 +300,12 @@ class App extends React.Component {
            );
         });
 
+
         return (
             <div>
+                <div>
+                    {this.state.invalidRowAlert}
+                </div>
                 <div className="main">
                     {generateAllRows}
                 </div>

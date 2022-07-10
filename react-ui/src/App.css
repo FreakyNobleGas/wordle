@@ -33,6 +33,10 @@ input {
   font-size: 2rem;
 }
 
+.alert {
+  text-align: center;
+}
+
 .submitButton {
   display: flex;
   justify-content: center;
